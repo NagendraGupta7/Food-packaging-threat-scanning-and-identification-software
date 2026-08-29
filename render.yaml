@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: legal-metrology-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false   # paste your Neon Postgres connection string here
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEFAULT_ADMIN_EMAIL
+        value: admin@compliancefactory.com
+      - key: DEFAULT_ADMIN_PASSWORD
+        sync: false   # choose your own admin password here
+
+  - type: web
+    name: legal-metrology-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE
+        sync: false   # paste your backend's Render URL here, e.g. https://legal-metrology-backend.onrender.com

@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+legal_metrology.db
+legal_metrology.db-journal
+uploads/*
+!uploads/.gitkeep
