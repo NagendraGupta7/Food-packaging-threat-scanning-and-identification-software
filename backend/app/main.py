@@ -45,24 +45,31 @@ DEFAULT_ADMIN_PASSWORD = os.environ.get("DEFAULT_ADMIN_PASSWORD", "admin123")
 
 @app.on_event("startup")
 def seed_default_admin():
-    """Seed one default account so the app is usable immediately after setup.
-    Change DEFAULT_ADMIN_PASSWORD (env var) or the account's password before
-    using this anywhere beyond local development."""
+    """Seed or update the default account so the app is usable immediately after setup."""
     db = SessionLocal()
     try:
-        existing = db.query(User).filter(User.email == DEFAULT_ADMIN_EMAIL).first()
+        email = DEFAULT_ADMIN_EMAIL.strip().lower()
+        existing = db.query(User).filter(User.email.ilike(email)).first()
         if not existing:
             admin = User(
-                email=DEFAULT_ADMIN_EMAIL,
+                email=email,
                 full_name="Inspector Admin",
                 hashed_password=hash_password(DEFAULT_ADMIN_PASSWORD),
                 role="ADMIN",
             )
             db.add(admin)
             db.commit()
-            print(f"[startup] Seeded default admin account: {DEFAULT_ADMIN_EMAIL} / {DEFAULT_ADMIN_PASSWORD}")
+            print(f"[startup] Seeded default admin account: {email} / {DEFAULT_ADMIN_PASSWORD}")
+        else:
+            # Update password to ensure it matches current DEFAULT_ADMIN_PASSWORD
+            existing.hashed_password = hash_password(DEFAULT_ADMIN_PASSWORD)
+            db.commit()
+            print(f"[startup] Synchronized password for default admin account: {email}")
+    except Exception as e:
+        print(f"[startup] Error seeding admin: {e}")
     finally:
         db.close()
+
 
 
 class HealthResponse(BaseModel):

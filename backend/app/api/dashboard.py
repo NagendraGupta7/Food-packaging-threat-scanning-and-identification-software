@@ -79,6 +79,25 @@ def get_dashboard_stats(
         category_counts[category] += 1
     category_breakdown = [{"name": cat, "value": count} for cat, count in category_counts.items()]
 
+    # Recent inspections list for dashboard widget
+    recent_inspections_db = (
+        db.query(Inspection)
+        .order_by(Inspection.created_at.desc())
+        .limit(5)
+        .all()
+    )
+    recent_inspections = [
+        {
+            "id": insp.id,
+            "inspection_id": insp.inspection_id,
+            "product_name": insp.product.name if insp.product else "Unknown Product",
+            "status": insp.status,
+            "compliance_score": insp.compliance_score,
+            "created_at": insp.created_at.isoformat() if insp.created_at else None,
+        }
+        for insp in recent_inspections_db
+    ]
+
     return {
         "total_inspections": total_inspections,
         "compliant": compliant,
@@ -89,4 +108,5 @@ def get_dashboard_stats(
         "compliance_trend": compliance_trend,
         "violations_severity": violations_severity,
         "category_breakdown": category_breakdown,
+        "recent_inspections": recent_inspections,
     }

@@ -2,12 +2,14 @@ from typing import Dict, Any, List
 
 class ComplianceRuleEngine:
     def __init__(self):
-        # Hardcoded for prototype, should be loaded from DB
+        # Legal Metrology (Packaged Commodities) Mandatory Rules
         self.rules = [
-            {"id": "PC-001", "field": "manufacturer", "severity": "HIGH", "name": "Manufacturer Details"},
+            {"id": "PC-001", "field": "manufacturer", "severity": "HIGH", "name": "Manufacturer / Packer Details"},
             {"id": "PC-002", "field": "net_quantity", "severity": "HIGH", "name": "Net Quantity"},
             {"id": "PC-003", "field": "mrp", "severity": "HIGH", "name": "Maximum Retail Price (MRP)"},
-            {"id": "PC-004", "field": "consumer_care", "severity": "MEDIUM", "name": "Consumer Care Info"},
+            {"id": "PC-004", "field": "packing_date", "severity": "HIGH", "name": "Month & Year of Mfg / Packing"},
+            {"id": "PC-005", "field": "consumer_care", "severity": "MEDIUM", "name": "Consumer Care Details"},
+            {"id": "PC-006", "field": "country_of_origin", "severity": "MEDIUM", "name": "Country of Origin"},
         ]
 
     def evaluate(self, extracted_data: Dict[str, Any], readability_score: int) -> Dict[str, Any]:
@@ -31,7 +33,7 @@ class ComplianceRuleEngine:
 
         if readability_score < 75:
              violations.append({
-                    "rule_id": "PC-005",
+                    "rule_id": "PC-007",
                     "field": "readability",
                     "status": "WARNING",
                     "severity": "MEDIUM",

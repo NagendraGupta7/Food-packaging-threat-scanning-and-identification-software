@@ -103,16 +103,32 @@ export default function Dashboard() {
                </tr>
              </thead>
              <tbody>
-               <tr>
-                 <td className="py-3 font-geist-mono text-[12px] text-bone border-b border-carbon-lift">INS-20260826044916</td>
-                 <td className="py-3 font-geist text-[12px] text-bone border-b border-carbon-lift">Premium Snacks Pack</td>
-                 <td className="py-3 font-geist text-[12px] border-b border-carbon-lift text-signal-orange">Non-Compliant</td>
-               </tr>
-               <tr>
-                 <td className="py-3 font-geist-mono text-[12px] text-bone border-b border-carbon-lift">INS-20260826041122</td>
-                 <td className="py-3 font-geist text-[12px] text-bone border-b border-carbon-lift">Beverage Pack 500ml</td>
-                 <td className="py-3 font-geist text-[12px] border-b border-carbon-lift text-metric-green">Compliant</td>
-               </tr>
+               {isLoading ? (
+                 <tr>
+                   <td colSpan={3} className="py-4 text-center text-[12px] text-warm-granite">Loading recent scans...</td>
+                 </tr>
+               ) : !stats?.recent_inspections?.length ? (
+                 <tr>
+                   <td colSpan={3} className="py-4 text-center text-[12px] text-warm-granite">No inspections recorded yet.</td>
+                 </tr>
+               ) : (
+                 stats.recent_inspections.map((item: any) => {
+                   const isCompliant = item.status === "COMPLIANT";
+                   return (
+                     <tr 
+                       key={item.id} 
+                       onClick={() => window.location.href = `/inspections/${item.id}`}
+                       className="cursor-pointer hover:bg-carbon-lift/30 transition-colors"
+                     >
+                       <td className="py-3 font-geist-mono text-[12px] text-bone border-b border-carbon-lift">{item.inspection_id}</td>
+                       <td className="py-3 font-geist text-[12px] text-bone border-b border-carbon-lift">{item.product_name}</td>
+                       <td className={`py-3 font-geist text-[12px] border-b border-carbon-lift ${isCompliant ? 'text-metric-green' : 'text-signal-orange'}`}>
+                         {item.status}
+                       </td>
+                     </tr>
+                   );
+                 })
+               )}
              </tbody>
            </table>
         </div>

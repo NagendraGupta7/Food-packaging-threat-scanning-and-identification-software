@@ -43,7 +43,7 @@ export default function NewInspection() {
                     setProductName(res.data.name);
                     if (res.data.details) setProductDetails(res.data.details);
                 }
-            } catch (apiErr) {
+            } catch {
                 setProductName(`Product #${decodedText.substring(0, 4)}`);
                 setProductDetails('No details available in the global GS1 database.');
             }
@@ -65,7 +65,7 @@ export default function NewInspection() {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-    } catch (err) {
+    } catch {
       alert("Could not access camera. Please allow permissions.");
       setImageScanning(false);
     }

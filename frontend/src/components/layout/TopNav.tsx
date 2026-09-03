@@ -1,19 +1,15 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { User, LogOut } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
 export default function TopNav() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem('token'));
-    setUserEmail(localStorage.getItem('userEmail') || '');
-  }, [location]);
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const userEmail = typeof window !== 'undefined' ? (localStorage.getItem('userEmail') || '') : '';
+  const isLoggedIn = !!token;
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -28,7 +24,7 @@ export default function TopNav() {
       <div className="flex items-center space-x-12">
         {!isLoggedIn && (
            <Link to="/" className="font-geist-mono text-[12px] uppercase text-bone tracking-widest font-bold">
-             FACTORY
+             COMPLIANCE FACTORY
            </Link>
         )}
       </div>
