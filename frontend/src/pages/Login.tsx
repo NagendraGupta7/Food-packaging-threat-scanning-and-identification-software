@@ -97,10 +97,23 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="text-center font-geist text-[12px] text-warm-granite">
-           New setup? A default admin account is seeded on first backend start — see README.
+        <div className="bg-[#141414] border border-carbon-lift p-3 rounded-[8px] flex items-center justify-between text-[12px] font-geist text-warm-granite">
+          <div>
+            <span className="text-pale-stone font-medium">Default Admin:</span> admin@compliancefactory.com / admin123
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setEmail('admin@compliancefactory.com');
+              setPassword('admin123');
+            }}
+            className="text-xs bg-carbon-lift hover:bg-ash-stroke text-bone px-2 py-1 rounded transition-colors"
+          >
+            Auto-fill
+          </button>
         </div>
       </div>
     </div>
   );
 }
+

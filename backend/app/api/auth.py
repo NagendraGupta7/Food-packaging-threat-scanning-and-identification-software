@@ -16,12 +16,13 @@ router = APIRouter()
 
 @router.post("/register", response_model=UserOut)
 def register(payload: UserCreate, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == payload.email).first()
+    clean_email = payload.email.strip().lower()
+    existing = db.query(User).filter(User.email.ilike(clean_email)).first()
     if existing:
         raise HTTPException(status_code=400, detail="An account with this email already exists.")
 
     user = User(
-        email=payload.email,
+        email=clean_email,
         full_name=payload.full_name,
         hashed_password=hash_password(payload.password),
         role="INSPECTOR",
@@ -34,7 +35,8 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 def login(payload: LoginRequest, db: Session = Depends(get_db)):
-    user = authenticate_user(db, payload.email, payload.password)
+    clean_email = payload.email.strip().lower()
+    user = authenticate_user(db, clean_email, payload.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -42,6 +44,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
         )
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer", "user": user}
+
 
 
 @router.get("/me", response_model=UserOut)

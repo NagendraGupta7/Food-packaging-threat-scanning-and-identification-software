@@ -1,8 +1,8 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15
+    container_name: legal_metrology_db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: factory_user
       POSTGRES_PASSWORD: factory_password
@@ -11,6 +11,44 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U factory_user -d legal_metrology_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: legal_metrology_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://factory_user:factory_password@db:5432/legal_metrology_db
+      SECRET_KEY: ${SECRET_KEY:-compliance_secret_jwt_key_2026}
+      DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL:-admin@compliancefactory.com}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD:-admin123}
+      PORT: 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE: http://localhost:8000
+    container_name: legal_metrology_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
 
 volumes:
   pgdata:

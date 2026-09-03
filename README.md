@@ -20,7 +20,18 @@ This system is an AI-assisted inspection tool designed for Packaged Commodities 
 ## Project Structure
 - `/frontend`: React SPA
 - `/backend`: FastAPI service
-- `docker-compose.yml`: optional Postgres configuration (not required for default SQLite setup)
+- `docker-compose.yml`: Full-stack Docker Compose configuration (PostgreSQL Database, FastAPI Backend with OCR, and React Frontend)
+
+## Quick Start (Docker Compose - Run Everything Together)
+
+To run the complete stack (Database, Backend, and Frontend) in one command:
+```bash
+docker compose up --build
+```
+- **Frontend App**: `http://localhost:5173`
+- **Backend API & Swagger Docs**: `http://localhost:8000/docs`
+- **Default Admin Login**: `admin@compliancefactory.com` / `admin123`
+
 
 ## Setup Instructions
 
